@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Research Pathway Navigator — วพบ.ขอนแก่น</title>
+<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{min-height:100vh;background:linear-gradient(135deg,#0f172a 0%,#1a2744 60%,#0f172a 100%);font-family:'Sarabun','Noto Sans Thai',sans-serif;color:#f1f5f9;padding:28px 14px;}
+input:focus{outline:none;}
+.app{max-width:780px;margin:0 auto;}
+/* Header */
+.header{text-align:center;margin-bottom:24px;}
+.badge-pill{display:inline-flex;align-items:center;gap:8px;background:rgba(99,102,241,0.12);border:1px solid rgba(99,102,241,0.25);border-radius:99px;padding:5px 16px;margin-bottom:12px;}
+.badge-pill span{color:#a5b4fc;font-size:11px;font-weight:700;letter-spacing:0.07em;}
+h1{font-size:24px;font-weight:800;margin-bottom:6px;}
+.subtitle{color:#475569;font-size:13px;margin-bottom:14px;}
+.level-pills{display:flex;gap:6px;justify-content:center;flex-wrap:wrap;}
+.level-pill{display:flex;align-items:center;gap:5px;background:rgba(255,255,255,0.04);border-radius:99px;padding:4px 10px;font-size:11px;}
+/* Search */
+.search-wrap{position:relative;margin-bottom:18px;}
+.search-box{display:flex;align-items:center;background:rgba(255,255,255,0.07);border:1.5px solid rgba(255,255,255,0.12);border-radius:13px;padding:12px 16px;gap:10px;}
+.search-box input{flex:1;background:transparent;border:none;color:#f1f5f9;font-size:15px;font-family:'Sarabun',sans-serif;}
+.search-box input::placeholder{color:#475569;}
+.clear-btn{background:none;border:none;color:#475569;cursor:pointer;font-size:20px;line-height:1;padding:0;}
+.dropdown{position:absolute;top:calc(100% + 6px);left:0;right:0;background:#1e293b;border:1px solid rgba(255,255,255,0.1);border-radius:12px;overflow:hidden;z-index:99;box-shadow:0 20px 40px rgba(0,0,0,0.5);max-height:300px;overflow-y:auto;display:none;}
+.dropdown.open{display:block;}
+.drop-item{padding:10px 16px;cursor:pointer;border-bottom:1px solid rgba(255,255,255,0.04);display:flex;justify-content:space-between;align-items:center;transition:background 0.15s;}
+.drop-item:hover{background:rgba(99,102,241,0.15);}
+.drop-item-name{font-size:14px;}
+.drop-item-tags{display:flex;gap:4px;margin-top:3px;flex-wrap:wrap;}
+.drop-level-badge{font-size:11px;padding:2px 8px;border-radius:99px;font-weight:700;white-space:nowrap;margin-left:8px;flex-shrink:0;}
+/* Profile */
+.card{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:16px;padding:22px;margin-bottom:10px;}
+.profile-head{display:flex;gap:14px;flex-wrap:wrap;justify-content:space-between;align-items:flex-start;}
+.profile-name{font-size:21px;font-weight:800;margin-bottom:3px;}
+.profile-pos{color:#94a3b8;font-size:13px;margin-bottom:2px;}
+.profile-deg{color:#64748b;font-size:12px;margin-bottom:8px;}
+.tag-wrap{display:flex;flex-wrap:wrap;gap:5px;}
+.exp-tag{font-size:11px;padding:3px 9px;border-radius:99px;color:#1e293b;font-weight:700;border:1px solid rgba(0,0,0,0.08);}
+.level-badge{display:inline-flex;align-items:center;gap:8px;border-radius:11px;padding:9px 14px;margin-bottom:6px;}
+.level-label{font-weight:800;font-size:13px;}
+.level-desc{color:#64748b;font-size:11px;}
+.level-bar{display:flex;gap:3px;}
+.level-bar-seg{height:5px;flex:1;border-radius:3px;}
+/* Stats grid */
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin-bottom:10px;}
+.stat-card{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.06);border-radius:11px;padding:12px 8px;text-align:center;}
+.stat-val{font-size:24px;font-weight:800;line-height:1.1;}
+.stat-lbl{font-size:11px;color:#64748b;margin-top:3px;font-weight:500;}
+/* Tabs */
+.tabs{display:flex;gap:5px;margin-bottom:10px;background:rgba(255,255,255,0.03);padding:4px;border-radius:11px;border:1px solid rgba(255,255,255,0.06);}
+.tab-btn{flex:1;padding:8px 10px;border-radius:8px;font-size:12px;font-weight:600;font-family:'Sarabun',sans-serif;cursor:pointer;border:none;background:transparent;color:#64748b;transition:all 0.2s;}
+.tab-btn.active{background:#6366f1;color:#fff;}
+/* Tab content */
+.tab-content{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);border-radius:13px;padding:20px;}
+.section-title{color:#f1f5f9;font-size:14px;font-weight:700;margin-bottom:14px;}
+/* Year bars */
+.year-row{display:flex;align-items:center;gap:8px;margin-bottom:6px;}
+.year-lbl{color:#334155;font-size:12px;width:34px;text-align:right;flex-shrink:0;}
+.year-bar{flex:1;height:24px;background:#0f172a;border-radius:5px;overflow:hidden;display:flex;align-items:center;}
+.year-bar-empty{color:#1e293b;font-size:11px;padding-left:8px;}
+.year-bar-seg{flex:1;height:100%;border-right:2px solid #0f172a;display:flex;align-items:center;padding-left:6px;}
+.year-count{color:#475569;font-size:12px;width:14px;flex-shrink:0;}
+/* Pub type badges */
+.type-badge{display:inline-block;padding:2px 7px;border-radius:99px;font-size:11px;font-weight:700;}
+/* Grants */
+.grants-wrap{margin-top:16px;}
+.grant-item{display:flex;align-items:center;gap:8px;padding:7px 12px;background:#0f172a;border-radius:8px;margin-bottom:5px;border:1px solid rgba(99,102,241,0.2);}
+.grant-item span{color:#c7d2fe;font-size:13px;}
+/* Level criteria boxes */
+.criteria-box{margin-top:14px;padding:10px 12px;border-radius:8px;}
+.criteria-label{font-weight:700;font-size:12px;}
+.criteria-text{font-size:12px;}
+/* Publications list */
+.pub-item{padding:11px 12px;background:#0f172a;border-radius:9px;margin-bottom:6px;border:1px solid rgba(255,255,255,0.04);display:flex;gap:10px;}
+.pub-year{color:#334155;font-size:12px;min-width:32px;padding-top:2px;flex-shrink:0;}
+.pub-title{color:#cbd5e1;font-size:13px;line-height:1.5;margin-bottom:4px;}
+.pub-journal{color:#334155;font-size:11px;margin-bottom:5px;}
+.empty-state{text-align:center;padding:30px 20px;}
+.empty-icon{font-size:36px;margin-bottom:8px;}
+.empty-text{color:#475569;font-size:13px;}
+/* Next steps */
+.step-item{display:flex;gap:10px;padding:10px 12px;background:rgba(255,255,255,0.02);border-radius:9px;margin-bottom:5px;border:1px solid rgba(255,255,255,0.04);transition:all 0.2s;}
+.step-item:hover{background:#0f172a;transform:translateX(3px);}
+.step-num{width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;flex-shrink:0;}
+.step-text{color:#cbd5e1;font-size:13px;line-height:1.6;padding-top:1px;}
+.rec-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:14px;}
+.rec-box{padding:12px;background:#0f172a;border-radius:10px;border:1px solid rgba(255,255,255,0.05);}
+.rec-title{color:#f1f5f9;font-size:12px;font-weight:700;margin-bottom:8px;}
+.rec-item{font-size:12px;margin-bottom:4px;padding-left:7px;}
+/* Footer */
+.footer-note{color:#1e293b;font-size:11px;text-align:center;margin-top:10px;}
+/* Empty search state */
+.empty-search{text-align:center;padding:36px 20px;}
+.empty-search-icon{font-size:48px;margin-bottom:10px;opacity:0.25;}
+.quick-btns{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin-top:20px;}
+.quick-btn{background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.08);border-radius:99px;padding:5px 12px;color:#64748b;font-size:12px;cursor:pointer;font-family:'Sarabun',sans-serif;transition:all 0.2s;}
+.quick-btn:hover{background:rgba(99,102,241,0.2);}
+</style>
+</head>
+<body>
+<div class="app">
+  <!-- Header -->
+  <div class="header">
+    <div class="badge-pill">🧭 <span>BCNKK RESEARCH PATHWAY NAVIGATOR</span></div>
+    <h1>เส้นทางนักวิจัย วพบ.ขอนแก่น</h1>
+    <p class="subtitle" id="total-text">อาจารย์ 48 คน · พิมพ์ชื่อเพื่อดู Research Profile ส่วนตัว</p>
+    <div class="level-pills" id="level-pills"></div>
+  </div>
+
+  <!-- Search -->
+  <div class="search-wrap">
+    <div class="search-box">
+      <span>🔍</span>
+      <input type="text" id="search-input" placeholder="พิมพ์ชื่อหรือนามสกุลอาจารย์...">
+      <button class="clear-btn" id="clear-btn" style="display:none">×</button>
+    </div>
+    <div class="dropdown" id="dropdown"></div>
+  </div>
+
+  <!-- Main content area -->
+  <div id="main-content"></div>
+</div>
+
+<script>
+// ─────────────────────────── DATA ───────────────────────────
+const LEVELS=[
+  {level:1,label:"ผู้เริ่มต้น",     color:"#94a3b8",bg:"#f1f5f9",icon:"🌱",desc:"ยังไม่มีผลงานตีพิมพ์",       criteria:"ยังไม่มีบทความ หรือ TCI2 ≤ 1",
+   nextSteps:["เลือกหัวข้อวิจัยจากงานที่สอน","ศึกษาระเบียบวิธีวิจัยเบื้องต้น","ยื่นขอ IRB สถาบัน","เขียน Research Proposal ≤ 50,000 บาท","ส่งวารสาร TCI Tier 2 ในสาขา"],
+   journals:["วารสารศูนย์อนามัยที่ 7","วารสารสาธารณสุขจังหวัด","วารสารวิชาการหลักสูตรและการสอน"],
+   funding:["ทุนวิจัยภายในวิทยาลัย (วพบ.)","ทุนวิจัย สบช. / PBRI"]},
+  {level:2,label:"กำลังพัฒนา",    color:"#f59e0b",bg:"#fffbeb",icon:"🌿",desc:"มีบทความ TCI แต่ยังน้อย",    criteria:"TCI Tier1 + Tier2 รวม 1–3 บทความ",
+   nextSteps:["เพิ่มงานตีพิมพ์ให้ครบ 3 บทความ TCI1 ใน 5 ปี","สร้างเครือข่ายนักวิจัยภายในสถาบัน","เตรียม Portfolio สำหรับยื่น ผศ.","ส่ง Abstract ประชุมวิชาการระดับชาติ","พัฒนา Academic Writing ภาษาอังกฤษ"],
+   journals:["วารสารพยาบาลศาสตร์และสุขภาพ","วารสารการพยาบาลและการดูแลสุขภาพ","พยาบาลสาร มช."],
+   funding:["ทุน วช. นักวิจัยรุ่นใหม่","ทุน สกสว. ชุดโครงการ","สปสช. Research Grant"]},
+  {level:3,label:"กำลังเติบโต",    color:"#3b82f6",bg:"#eff6ff",icon:"🌳",desc:"มี TCI ดี เริ่มมี Scopus",   criteria:"TCI ≥ 3 หรือ Scopus 1–2 บทความ",
+   nextSteps:["เขียนบทความภาษาอังกฤษส่ง Scopus journal","ยื่นขอทุน วช. โครงการเดี่ยว ≤ 500,000 บาท","สร้าง Google Scholar & ORCID Profile","ร่วมเป็น Co-investigator กับอาจารย์ระดับ Leader","เตรียมยื่น ผศ. (ถ้ายังไม่ได้)"],
+   journals:["Nursing for Women's Health","Pacific Rim Int J Nursing Research","Journal of Health Research"],
+   funding:["ทุน วช. (NRCT)","ทุน สกสว. Research Area (P2)","สปสช. Research Grant"]},
+  {level:4,label:"ผู้นำวิจัย",      color:"#8b5cf6",bg:"#f5f3ff",icon:"⭐",desc:"Scopus ต่อเนื่อง ตำแหน่ง ผศ.",criteria:"Scopus ≥ 2, มีทุนวิจัย, ตำแหน่ง ผศ.",
+   nextSteps:["เขียนบทความ Q1/Q2 อย่างน้อย 1 เรื่องต่อปี","ยื่นขอทุนนานาชาติ (Wellcome, Gates, IDRC)","สร้างเครือข่าย International Collaboration","Mentor อาจารย์ระดับผู้เริ่มต้น–กำลังเติบโต","เตรียมยื่น รศ. (Q1 ≥ 2 + ผลงานวิชาการอื่น)"],
+   journals:["Journal of Advanced Nursing","Journal of Interpersonal Violence","BMJ Open"],
+   funding:["NIH R21","Wellcome Career Development","NRCT Hub of Talent"]},
+  {level:5,label:"ผู้นำวิจัยนานาชาติ",color:"#059669",bg:"#ecfdf5",icon:"🏆",desc:"ทุนนานาชาติ สร้าง Research Program",criteria:"ทุนนานาชาติ, Q1 ≥ 3, Research Program ชัดเจน",
+   nextSteps:["ต่อยอดทุนวิจัยชุดใหม่ (renewal/sequel)","ผลิตนักวิจัยรุ่นใหม่ผ่าน mentorship","สร้าง Hub of Talent / Center of Excellence","ยื่นขอ Full Professorship (รศ./ศ.)","Disseminate ผ่าน Policy Brief & Public Engagement"],
+   journals:["Lancet","Nature Medicine","NEJM","JAMA"],
+   funding:["NIH R01","Wellcome Principal Award","ERC Grant"]},
+];
+
+const TAG_COLORS={
+  "ความรุนแรงในคู่สมรส":"#fce7f3","Digital Health":"#e0f2fe","WeSafe":"#d1fae5","Safety Planning":"#fce7f3","NIH K43":"#dcfce7",
+  "ภาวะสมองเสื่อม":"#ede9fe","LTC":"#fef3c7","การดูแลระยะยาว":"#fef3c7","Palliative Care":"#fce7f3",
+  "มะเร็งในเด็ก":"#ffe4e6","พัฒนาการเด็ก":"#fef9c3","ผู้สูงอายุ":"#e0f2fe",
+  "สุขภาพจิต":"#f3e8ff","ซึมเศร้า":"#f3e8ff","สุขภาพชุมชน":"#dcfce7",
+  "มารดาทารก":"#fce7f3","การผดุงครรภ์":"#fce7f3","เบาหวาน":"#fff7ed",
+  "โรคไต":"#e0f2fe","โรคไม่ติดต่อเรื้อรัง":"#fff7ed","COVID-19":"#fee2e2",
+  "นวัตกรรมการสอน":"#fef9c3","การศึกษาพยาบาล":"#fef9c3","CPR":"#fee2e2",
+};
+function tagColor(t){ return TAG_COLORS[t]||"#f1f5f9"; }
+
+const TYPE_STYLE={
+  "TCI1":{bg:"#dbeafe",text:"#1d4ed8",border:"#93c5fd"},
+  "TCI2":{bg:"#fef9c3",text:"#854d0e",border:"#fde047"},
+  "Scopus-Q1":{bg:"#dcfce7",text:"#166534",border:"#86efac"},
+  "Scopus-Q2":{bg:"#d1fae5",text:"#065f46",border:"#6ee7b7"},
+  "Scopus-Q3":{bg:"#e0f2fe",text:"#075985",border:"#7dd3fc"},
+  "Scopus-Q4":{bg:"#f0fdf4",text:"#14532d",border:"#bbf7d0"},
+};
+function typeBadge(type){
+  const s=TYPE_STYLE[type]||{bg:"#f3f4f6",text:"#374151",border:"#d1d5db"};
+  return `<span class="type-badge" style="background:${s.bg};color:${s.text};border:1px solid ${s.border}">${type}</span>`;
+}
+
+const FACULTY=[
+  {id:1,prefix:"ผศ.ดร.",first:"ฉวีวรรณ",last:"ศรีดาวเรือง",pos:"ผู้ช่วยศาสตราจารย์ (ผู้อำนวยการ)",deg:"PhD - University of East Anglia, UK",field:"การพยาบาลชุมชน",tags:["สุขภาพชุมชน","สุขภาพปฐมภูมิ","อสม.","ถ่ายโอน รพ.สต."],tci1:4,tci2:1,scopus:1,q1:0,level:4,grants:["PBRI Internal Grant 2566"],
+   pubs:[{y:2568,t:"การประเมินคุณภาพและประสิทธิภาพการจัดบริการ รพ.สต.หลังการถ่ายโอนสู่ อบจ.",j:"วารสารวิจัยระบบสาธารณสุข",type:"TCI1"},{y:2567,t:"Factors affecting hospital provision of health-promoting services",j:"Int J Environmental Research & Public Health",type:"Scopus-Q2"},{y:2567,t:"ศักยภาพการมีส่วนร่วมของ อสม.ในการจัดการสุขภาพชุมชน",j:"วารสารวิจัยระบบสาธารณสุข",type:"TCI1"},{y:2566,t:"การจัดบริการสุขภาพปฐมภูมิยุคนโยบายสามหมอ",j:"วารสารวิจัยระบบสุขภาพ",type:"TCI1"},{y:2565,t:"การสนับสนุนของสามีในการเลี้ยงลูกด้วยนมแม่",j:"วารสารวิทยาศาสตร์สุขภาพ",type:"TCI1"},{y:2563,t:"ความรู้ ทัศนคติ และพฤติกรรมการบริโภคอาหาร",j:"วารสารศูนย์อนามัยที่ 9",type:"TCI2"}]},
+  {id:2,prefix:"ดร.",first:"ธรณิศ",last:"สายวัฒน์",pos:"อาจารย์",deg:"PhD - การวัดและประเมินผล มข.",field:"สุขภาพจิตและจิตเวช",tags:["สุขภาพจิต","ซึมเศร้า","ดนตรีบำบัด","การวัดและประเมินผล"],tci1:1,tci2:3,scopus:0,q1:0,level:2,grants:[],
+   pubs:[{y:2568,t:"ผลของโปรแกรมบูรณาการดนตรีพื้นบ้านอีสานบำบัดต่อภาวะซึมเศร้าของนักศึกษาพยาบาล",j:"วารสารโรงพยาบาลสกลนคร",type:"TCI2"},{y:2566,t:"ปัจจัยทำนายความรอบรู้ด้านสุขภาพ อสม.",j:"วารสารพยาบาลศาสตร์และสุขภาพ",type:"TCI1"},{y:2565,t:"ความคิดเห็นเกี่ยวกับการตีตราของผู้ป่วยวัณโรค",j:"วารสารสำนักงานป้องกันควบคุมโรคที่ 7",type:"TCI2"},{y:2564,t:"การพัฒนารูปแบบการจัดการเรียนการสอน",j:"วารสารชุมชนวิจัย มรนม.",type:"TCI2"}]},
+  {id:3,prefix:"ดร.",first:"รัชนี",last:"พจนา",pos:"อาจารย์",deg:"PhD - การบริหารการศึกษา มมร.",field:"มารดาทารก / ผู้สูงอายุ",tags:["มารดาทารก","การเลี้ยงลูกด้วยนมแม่","ผู้สูงอายุ","ทารกคลอดก่อนกำหนด"],tci1:2,tci2:2,scopus:1,q1:0,level:3,grants:[],
+   pubs:[{y:2567,t:"ผลลัพธ์การจัดบริการดูแลผู้สูงอายุที่มีภาวะพึ่งพิง LTC",j:"วารสารวิจัยการพยาบาลและการสาธารณสุข",type:"TCI1"},{y:2565,t:"การสนับสนุนของสามีในการเลี้ยงลูกด้วยนมแม่",j:"วารสารวิทยาศาสตร์สุขภาพ",type:"TCI1"},{y:2564,t:"การพัฒนารูปแบบการจัดการความปวดระยะที่หนึ่งของการคลอด",j:"วารสารพยาบาลศาสตร์และสุขภาพ",type:"TCI2"},{y:2564,t:"Risk Factors of Preterm Birth among Northeastern Thai Teenage Mothers",j:"J South Asian Federation of Obstetrics & Gynecology",type:"Scopus-Q4"}]},
+  {id:4,prefix:"ผศ.ดร.",first:"ศุภวดี",last:"แถวเพีย",pos:"ผู้ช่วยศาสตราจารย์",deg:"PhD - University of San Diego, USA",field:"มารดาทารกและการผดุงครรภ์",tags:["มารดาทารก","ความรุนแรงในคู่สมรส","นวัตกรรมการสอน","ธาลัสซีเมีย"],tci1:2,tci2:1,scopus:1,q1:0,level:4,grants:["PBRI Research Grant 2565"],
+   pubs:[{y:2567,t:"Perceptions of Screening Women for IPV Among Health Care Providers in Thailand",j:"Nursing for Women's Health",type:"Scopus-Q2"},{y:2567,t:"ผลของการจัดการเรียนรู้ผ่านเกม วิวาห์เลือกคู่",j:"วารสารการพยาบาลและการดูแลสุขภาพ",type:"TCI1"},{y:2565,t:"ประสิทธิผลการจัดการเรียนการสอนผ่านสื่อเสมือนจริง",j:"วารสารวิจัยทางวิทยาศาสตร์สุขภาพ",type:"TCI1"},{y:2565,t:"การตระหนักรู้ตนเอง การเข้าใจความรู้สึกผู้อื่น",j:"วารสารสุขภาพและการศึกษาพยาบาล",type:"TCI2"}]},
+  {id:5,prefix:"ผศ.ดร.",first:"แสงดาว",last:"จันทร์ดา",pos:"ผู้ช่วยศาสตราจารย์",deg:"PhD - พยาบาลศาสตร์ ม.มหิดล",field:"การพยาบาลชุมชน",tags:["สุขภาพชุมชน","บุหรี่อิเล็กทรอนิกส์","ผู้สูงอายุ","พลเมืองสร้างสรรค์","ห้องฉุกเฉินผู้สูงอายุ"],tci1:2,tci2:1,scopus:2,q1:2,level:5,grants:["PBRI Research Grant"],
+   pubs:[{y:2568,t:"Factors associated with re-attendance at emergency departments among older adults",j:"Inquiry: The Journal of Health Care Organization, Provision, and Financing",type:"Scopus-Q1"},{y:2566,t:"Association between socioecological factors & e-cigarette use among Thai youth",j:"BMJ Open",type:"Scopus-Q1"},{y:2566,t:"ปัจจัยที่มีความสัมพันธ์กับการปฏิบัติบทบาทโค้ช",j:"วารสารวิจัยสุขภาพและการพยาบาล",type:"TCI1"},{y:2566,t:"ปัจจัยภาวะสุขภาพและพฤติกรรมสุขภาพ ความดันโลหิตสูง",j:"วารสารวิจัยและพัฒนาสุขภาพ",type:"TCI2"},{y:2564,t:"การพัฒนาและหาความตรงแบบวัดคุณลักษณะพลเมืองสร้างสรรค์",j:"วารสารสุขภาพและการศึกษาพยาบาล",type:"TCI1"}]},
+  {id:6,prefix:"อ.",first:"รุ่งทิพย์",last:"พรหมบุตร",pos:"อาจารย์",deg:"พย.ม. - การพยาบาลผู้ใหญ่ มข.",field:"ผู้ใหญ่และผู้สูงอายุ",tags:["ผู้สูงอายุ","ความดันโลหิตสูง","นโยบายสุขภาพ"],tci1:1,tci2:1,scopus:0,q1:0,level:2,grants:[],
+   pubs:[{y:2566,t:"ผลของโปรแกรมส่งเสริมความรอบรู้ด้านสุขภาพ ความดันโลหิต",j:"วารสารพยาบาลทหารบก",type:"TCI1"},{y:2566,t:"รูปแบบการพัฒนานโยบายสาธารณะกองทุนดูแลผู้สูงอายุ",j:"วารสารวิจัยและพัฒนาระบบสุขภาพ",type:"TCI2"}]},
+  {id:7,prefix:"ผศ.ดร.",first:"สาคร",last:"อินโท่โล่",pos:"ผู้ช่วยศาสตราจารย์",deg:"PhD - การพยาบาล มข.",field:"ผู้ใหญ่ / ชุมชน / โรคไต",tags:["ผู้สูงอายุ","โรคไตเรื้อรัง","การพยาบาลชุมชน","COVID-19","เวชปฏิบัติ"],tci1:4,tci2:2,scopus:0,q1:0,level:4,grants:[],
+   pubs:[{y:2566,t:"กระบวนการคืนข้อมูลสู่ชุมชนเพื่อการมีส่วนร่วมดูแลผู้สูงอายุ",j:"วารสารสภาการพยาบาล",type:"TCI1"},{y:2566,t:"การดูแลผู้สูงอายุยุควิถีถัดไป: กึ่งเมืองกึ่งชนบท",j:"วารสารแพทย์นาวี",type:"TCI1"},{y:2566,t:"การพัฒนาแอปพลิเคชันคัดกรองสุขภาพสำหรับ อสม.",j:"วารสารพยาบาล",type:"TCI1"},{y:2565,t:"บทบาทพยาบาลชุมชนกับการจัดสิ่งแวดล้อมสุขภาพผู้สูงอายุ",j:"วารสารมหาวิทยาลัยนราธิวาสราชนครินทร์",type:"TCI1"},{y:2564,t:"การควบคุมและป้องกันการติดเชื้อโรคโควิด-19 บทบาท APN",j:"วารสารสภาการพยาบาล",type:"TCI1"},{y:2564,t:"ปัญหาและความต้องการด้านการดูแลของผู้ดูแลผู้สูงอายุ",j:"วารสารวิทยาลัยบัณฑิตเอเชีย",type:"TCI2"}]},
+  {id:8,prefix:"ผศ.ดร.",first:"กันนิษฐา",last:"มาเห็ม",pos:"ผู้ช่วยศาสตราจารย์",deg:"PhD - พยาบาลศาสตร์ มข.",field:"การพยาบาลชุมชน / ผู้สูงอายุ",tags:["ผู้สูงอายุ","สุขภาพชุมชน","คุณภาพชีวิต","โรคเรื้อรัง","MSDs"],tci1:1,tci2:1,scopus:2,q1:1,level:3,grants:[],
+   pubs:[{y:2566,t:"Association of e-learning devices & WMSDs among Thai students",j:"PLoS ONE",type:"Scopus-Q1"},{y:2566,t:"Quality of Life among Elderly in Yogyakarta",j:"Jurnal Promkes Indonesia",type:"Scopus-Q3"},{y:2566,t:"แนวทางการพัฒนาสุขภาวะองค์รวมโรงเรียนผู้สูงอายุ",j:"วารสารวิจัยทางวิทยาศาสตร์สุขภาพ",type:"TCI1"},{y:2566,t:"การพัฒนารูปแบบการจัดการโรคเรื้อรังผู้สูงอายุแบบมีส่วนร่วม",j:"วารสารวิจัยการพยาบาลและวิทยาศาสตร์สุขภาพ",type:"TCI2"}]},
+  {id:9,prefix:"อ.",first:"ณรงค์",last:"คำอ่อน",pos:"อาจารย์",deg:"พย.ม. - การบริหารการพยาบาล มข.",field:"ผู้ใหญ่ / เวชปฏิบัติทั่วไป",tags:["เวชปฏิบัติ","CPR","ป้องกันอุบัติเหตุ","ผู้สูงอายุ"],tci1:1,tci2:2,scopus:0,q1:0,level:2,grants:[],
+   pubs:[{y:2566,t:"กระบวนการคืนข้อมูลสู่ชุมชนเพื่อการมีส่วนร่วมดูแลผู้สูงอายุ",j:"วารสารสภาการพยาบาล",type:"TCI1"},{y:2566,t:"ผลของโปรแกรมพัฒนาสมรรถนะ CPR นักเรียน ม.ปลาย",j:"วารสารบัณฑิตเอเชีย",type:"TCI2"},{y:2563,t:"ผลการอบรมป้องกันอุบัติเหตุทางการจราจร",j:"วารสารวิจัยและพัฒนาระบบสุขภาพ",type:"TCI2"}]},
+  {id:10,prefix:"ผศ.ดร.",first:"ศิราณี",last:"ศรีหาภาค",pos:"ผู้ช่วยศาสตราจารย์",deg:"PhD - การพัฒนาสุขภาพชุมชน มข.",field:"ชุมชน / ภาวะสมองเสื่อม / LTC",tags:["ภาวะสมองเสื่อม","ผู้สูงอายุ","LTC","นโยบายสุขภาพ","การดูแลระยะยาว"],tci1:4,tci2:3,scopus:2,q1:0,level:4,grants:["PBRI Research Grant 2566","สปสช. Research 2567"],
+   pubs:[{y:2567,t:"Commentary: strengthening system readiness for health interventions",j:"Evaluation & the Health Professions",type:"Scopus-Q2"},{y:2567,t:"ผลลัพธ์โปรแกรมป้องกันภาวะสมองเสื่อม รพ.สบปราบ",j:"วารสารอนามัยสิ่งแวดล้อมและสุขภาพชุมชน",type:"TCI1"},{y:2567,t:"ผลลัพธ์การจัดบริการดูแลผู้สูงอายุที่มีภาวะพึ่งพิง LTC",j:"วารสารวิจัยการพยาบาลและการสาธารณสุข",type:"TCI1"},{y:2567,t:"ความชุกและปัจจัยภาวะสมองเสื่อมผู้สูงอายุ อ.น้ำพอง",j:"วารสารศูนย์อนามัยที่ 9",type:"TCI2"},{y:2566,t:"รูปแบบการพัฒนานโยบายสาธารณะกองทุนดูแลผู้สูงอายุ",j:"วารสารวิจัยและพัฒนาระบบสุขภาพ",type:"TCI1"},{y:2565,t:"Cultural Adaptation of RDAD Protocol for Dementia in Thailand",j:"J Alzheimers Disease",type:"Scopus-Q2"},{y:2564,t:"สถานการณ์ปัญหาและความต้องการดูแลผู้สูงอายุระยะยาว",j:"วารสารศูนย์อนามัยที่ 9",type:"TCI2"}]},
+  {id:11,prefix:"ดร.",first:"สายใจ",last:"คำทะเนตร",pos:"อาจารย์",deg:"PhD - การบริหารการศึกษา มมร. 2566 | พย.ม. - สุขภาพจิตฯ ม.เชียงใหม่",field:"การพยาบาลสุขภาพจิต",tags:["สุขภาพจิต","การเรียนออนไลน์","นักศึกษาพยาบาล"],tci1:1,tci2:1,scopus:0,q1:0,level:2,grants:[],
+   pubs:[{y:2567,t:"ปัจจัยทำนายการปรับตัวในการเรียนออนไลน์ของนักศึกษาพยาบาล",j:"วารสารพยาบาลศาสตร์และสุขภาพ",type:"TCI1"},{y:2565,t:"ความคิดเห็นเกี่ยวกับการตีตราของผู้ป่วยวัณโรค",j:"วารสารสำนักงานป้องกันควบคุมโรคที่ 7",type:"TCI2"}]},
+  {id:12,prefix:"ผศ.",first:"ปิยนุช",last:"ภิญโย",pos:"ผู้ช่วยศาสตราจารย์",deg:"พย.ม. - เวชปฏิบัติชุมชน มข.",field:"ชุมชน / เวชปฏิบัติ",tags:["สุขภาพชุมชน","ป้องกันอุบัติเหตุ","เวชปฏิบัติ"],tci1:0,tci2:1,scopus:0,q1:0,level:1,grants:[],
+   pubs:[{y:2563,t:"ผลการอบรมป้องกันอุบัติเหตุทางการจราจร บุคลากร วพบ.ขก",j:"วารสารวิจัยและพัฒนาระบบสุขภาพ",type:"TCI2"}]},
+  {id:13,prefix:"ผศ.ดร.",first:"รัตน์ดาวรรณ",last:"คลังกลาง",pos:"ผู้ช่วยศาสตราจารย์",deg:"PhD - พยาบาลศาสตร์ มข.",field:"การพยาบาลชุมชน / ผู้สูงอายุ",tags:["ผู้สูงอายุ","สุขภาพชุมชน","การมีส่วนร่วม","จัดการขยะ"],tci1:3,tci2:2,scopus:0,q1:0,level:4,grants:["PBRI Research Grant"],
+   pubs:[{y:2566,t:"กระบวนการคืนข้อมูลสู่ชุมชนเพื่อการมีส่วนร่วมดูแลผู้สูงอายุ",j:"วารสารสภาการพยาบาล",type:"TCI1"},{y:2566,t:"การพัฒนาระบบจัดการขยะโดยการมีส่วนร่วมของชุมชน",j:"วารสารสำนักงานป้องกันควบคุมโรคที่ 7",type:"TCI2"},{y:2566,t:"ปัจจัยทำนายความรอบรู้ด้านสุขภาพต่อพฤติกรรม อสม.",j:"วารสารพยาบาลศาสตร์และสุขภาพ",type:"TCI1"},{y:2565,t:"บทบาทพยาบาลชุมชนกับการจัดสิ่งแวดล้อมสุขภาพผู้สูงอายุ",j:"วารสารมหาวิทยาลัยนราธิวาสราชนครินทร์",type:"TCI2"},{y:2564,t:"การพัฒนารูปแบบการจัดการเรียนการสอนสมรรถนะนักศึกษา",j:"วารสารชุมชนวิจัย มรนม.",type:"TCI1"}]},
+  {id:14,prefix:"ดร.",first:"ภาสินี",last:"โทอินทร์",pos:"อาจารย์",deg:"PhD - หลักสูตรและการเรียนการสอน มข.",field:"สุขภาพจิต / การศึกษาพยาบาล",tags:["สุขภาพจิต","การศึกษาพยาบาล","COVID-19","นักศึกษาพยาบาล"],tci1:4,tci2:2,scopus:0,q1:0,level:3,grants:[],
+   pubs:[{y:2567,t:"การจัดการเรียนการสอนทักษะทางปัญญาตามมาตรฐานคุณวุฒิ",j:"วารสารโรงพยาบาลสกลนคร",type:"TCI1"},{y:2566,t:"ภาวะเหนื่อยล้าของพยาบาลที่ดูแลผู้ป่วยโควิด-19",j:"วารสารโรคและภัยสุขภาพ สคร.3",type:"TCI2"},{y:2565,t:"ความสัมพันธ์ความเข้มแข็งทางจิตใจกับพฤติกรรมป้องกัน COVID-19",j:"วารสารโรงพยาบาลสกลนคร",type:"TCI1"},{y:2564,t:"การจัดการเรียนการสอนเพื่อส่งเสริมการแก้ปัญหาทางการพยาบาล",j:"วารสารวิจัยและพัฒนาหลักสูตร",type:"TCI1"},{y:2564,t:"การพัฒนารูปแบบการจัดการเรียนการสอนสมรรถนะนักศึกษา",j:"วารสารชุมชนวิจัย มรนม.",type:"TCI1"},{y:2564,t:"ผลของกิจกรรมสอนสุขภาพจิตต่อการทำหน้าที่ผู้ป่วยจิตเภท",j:"วารสารวิจัยและพัฒนาระบบสุขภาพ",type:"TCI2"}]},
+  {id:15,prefix:"ผศ.ดร.",first:"ทิพย์รัตน์",last:"อุดเมืองเพีย",pos:"ผู้ช่วยศาสตราจารย์",deg:"PhD - University of Missouri, USA",field:"IPV Prevention / Digital Health",tags:["ความรุนแรงในคู่สมรส","Digital Health","WeSafe","Safety Planning","NIH K43"],tci1:1,tci2:1,scopus:5,q1:5,level:5,grants:["NIH K43 Emerging Global Leader (Fogarty/NIMH)","NRCT Hub of Talent 2568","NRCT Innovation Grant - FamSafe Chatbot"],
+   pubs:[{y:2567,t:"Perceptions of Screening Women for IPV Among Health Care Providers",j:"Nursing for Women's Health",type:"Scopus-Q1"},{y:2565,t:"Technology-based & digital interventions for IPV: systematic review",j:"Campbell Systematic Reviews",type:"Scopus-Q1"},{y:2566,t:"การฟื้นสภาพของผู้ใช้ยาและสารเสพติด: บทเรียน COVID-19",j:"วารสารวิจัยทางวิทยาศาสตร์สุขภาพ",type:"TCI1"},{y:2565,t:"ประสิทธิผลการจัดการเรียนการสอนผ่านสื่อเสมือนจริง",j:"วารสารวิจัยทางวิทยาศาสตร์สุขภาพ",type:"TCI2"},{y:2563,t:"IPV Screening Intention Instrument: Principal Component Analysis",j:"Journal of Clinical Nursing",type:"Scopus-Q1"},{y:2563,t:"Perspectives of Thai Healthcare Providers on myPlan App",j:"Pacific Rim Int J Nursing Research",type:"Scopus-Q1"},{y:2563,t:"Prevalence, Risks, and Health Consequences of IPV during Pregnancy",j:"Pacific Rim Int J Nursing Research",type:"Scopus-Q1"}]},
+  {id:16,prefix:"ดร.",first:"เอมอร",last:"บุตรอุดม",pos:"อาจารย์",deg:"PhD - Univ. of Illinois at Chicago, USA",field:"มารดาทารก / เลี้ยงลูกด้วยนมแม่",tags:["มารดาทารก","การเลี้ยงลูกด้วยนมแม่","ความรุนแรงในคู่สมรส","COVID-19"],tci1:2,tci2:1,scopus:2,q1:0,level:4,grants:[],
+   pubs:[{y:2567,t:"Nursing Interventions for Pregnant Women during COVID-19: Integrative Review",j:"Int J Child Development & Mental Health",type:"Scopus-Q3"},{y:2567,t:"Perceptions of Screening Women for IPV Among Health Care Providers",j:"Nursing for Women's Health",type:"Scopus-Q2"},{y:2566,t:"ถอดบทเรียนบทบาทพยาบาลควบคุมการติดเชื้อช่วง COVID-19",j:"Journal of Health Science of Thailand",type:"TCI1"},{y:2565,t:"ประสิทธิผลการจัดการเรียนการสอนผ่านสื่อเสมือนจริง",j:"วารสารวิจัยทางวิทยาศาสตร์สุขภาพ",type:"TCI1"},{y:2564,t:"Behavior Outcomes of Breastfeeding-Friendly Policies Thai Working Women",j:"Pacific Rim Int J Nursing Research",type:"Scopus-Q3"},{y:2565,t:"คุณภาพแบบประเมินความรู้ทัศนคติการมีส่วนร่วมในการเลี้ยงลูก",j:"วารสารการพยาบาลและการดูแลสุขภาพ",type:"TCI2"}]},
+  {id:17,prefix:"อ.",first:"จรรยา",last:"ศรีมุงคุณ",pos:"อาจารย์",deg:"พย.ม. - การพยาบาลมารดาทารก",field:"มารดาทารก",tags:["มารดาทารก","การผดุงครรภ์"],tci1:0,tci2:0,scopus:0,q1:0,level:1,grants:[],pubs:[]},
+  {id:18,prefix:"ดร.",first:"ศรีสุดา",last:"ลุนพุฒิ",pos:"อาจารย์",deg:"PhD - พยาบาลศาสตร์",field:"ชุมชน / ผู้สูงอายุ",tags:["ผู้สูงอายุ","สุขภาพชุมชน","อสม."],tci1:1,tci2:1,scopus:0,q1:0,level:2,grants:[],
+   pubs:[{y:2567,t:"ปัจจัยที่มีผลต่อความสามารถดำเนินงานส่งเสริมสุขภาพผู้สูงอายุ อสม.",j:"วารสารศูนย์อนามัยที่ 7",type:"TCI1"},{y:2566,t:"รูปแบบการพัฒนานโยบายสาธารณะกองทุนดูแลผู้สูงอายุ",j:"วารสารวิจัยและพัฒนาระบบสุขภาพ",type:"TCI2"}]},
+  {id:19,prefix:"อ.",first:"สุพิศตรา",last:"พรหมกูล",pos:"อาจารย์",deg:"พย.ม. - สุขภาพเด็ก มข.",field:"พยาบาลเด็กและวัยรุ่น",tags:["พัฒนาการเด็ก","การใช้ยาอย่างสมเหตุผล","การศึกษาพยาบาล","พัฒนาการก่อนวัยเรียน"],tci1:3,tci2:1,scopus:0,q1:0,level:3,grants:[],
+   pubs:[{y:2568,t:"ปัจจัยที่มีอิทธิพลต่อพัฒนาการล่าช้าด้านกล้ามเนื้อมัดเล็กในเด็กอายุ 3–5 ปี ศูนย์พัฒนาเด็กเล็ก อ.เมือง จ.ขอนแก่น",j:"วารสารศูนย์อนามัยที่ 9",type:"TCI1"},{y:2568,t:"สถานการณ์พัฒนาการเด็กก่อนวัยเรียนในชุมชนกึ่งเมือง อ.เมือง จ.ขอนแก่น",j:"วารสารศูนย์อนามัยที่ 9",type:"TCI1"},{y:2566,t:"ความรู้ ทัศนคติ และผลสัมฤทธิ์การใช้ยาอย่างสมเหตุผล นักศึกษาพยาบาล",j:"วารสารชุมชนวิจัย มรนม.",type:"TCI1"},{y:2562,t:"ผลการเรียนรู้ตามกรอบ TQF ในรายวิชาหลักการและเทคนิคการพยาบาล",j:"วารสารวิชาการหลักสูตรและการสอน มรสน.",type:"TCI2"}]},
+  {id:20,prefix:"ผศ.",first:"พัฒนี",last:"ศรีโอษฐ์",pos:"ผู้ช่วยศาสตราจารย์",deg:"พย.ม. - สุขภาพจิตและจิตเวช มข.",field:"การพยาบาลสุขภาพจิต",tags:["สุขภาพจิต","ซึมเศร้า","นักศึกษาพยาบาล","COVID-19"],tci1:2,tci2:2,scopus:0,q1:0,level:2,grants:[],
+   pubs:[{y:2567,t:"การจัดการเรียนการสอนทักษะทางปัญญาตามมาตรฐานคุณวุฒิ",j:"วารสารโรงพยาบาลสกลนคร",type:"TCI1"},{y:2566,t:"ภาวะซึมเศร้าของนักศึกษาพยาบาลและปัจจัยที่เกี่ยวข้อง COVID-19",j:"วารสารสุขภาพและการศึกษาพยาบาล",type:"TCI2"},{y:2565,t:"ความสัมพันธ์ความเข้มแข็งทางจิตใจกับพฤติกรรมป้องกัน COVID-19",j:"วารสารโรงพยาบาลสกลนคร",type:"TCI1"},{y:2564,t:"ผลของกิจกรรมสอนสุขภาพจิตต่อการทำหน้าที่ผู้ป่วยจิตเภท",j:"วารสารวิจัยและพัฒนาระบบสุขภาพ",type:"TCI2"}]},
+  {id:21,prefix:"ดร.",first:"ทรงสุดา",last:"หมื่นไธสง",pos:"อาจารย์",deg:"PhD - หลักสูตรและการสอน มข.",field:"พยาบาลเด็ก / การศึกษาพยาบาล",tags:["พัฒนาการเด็ก","มะเร็งในเด็ก","CPR","การศึกษาพยาบาล","COVID-19"],tci1:2,tci2:2,scopus:1,q1:0,level:3,grants:[],
+   pubs:[{y:2567,t:"Hope in children with cancer: A narrative review and concept synthesis",j:"Int J Pediatric Oncology Nursing",type:"Scopus-Q3"},{y:2567,t:"การจัดการเรียนการสอนทักษะทางปัญญาตามมาตรฐานคุณวุฒิ",j:"วารสารโรงพยาบาลสกลนคร",type:"TCI1"},{y:2566,t:"ผลของโปรแกรมพัฒนาสมรรถนะ CPR นักเรียน ม.ปลาย",j:"วารสารบัณฑิตเอเชีย",type:"TCI2"},{y:2566,t:"บทเรียนการจัดระบบบริการตติยภูมิในภาวะวิกฤตโควิด-19",j:"วารสารวิจัยระบบสาธารณสุข",type:"TCI1"},{y:2564,t:"พฤติกรรมและผลกระทบจากการติดเกมของนักเรียนมัธยมศึกษา",j:"วารสารศูนย์อนามัยที่ 9",type:"TCI2"}]},
+  {id:22,prefix:"อ.",first:"สรัญญา",last:"เปล่งกระโทก",pos:"อาจารย์",deg:"พย.ม. - สุขภาพเด็ก มข.",field:"พยาบาลเด็กและวัยรุ่น",tags:["พัฒนาการเด็ก","การศึกษาพยาบาล","ผู้สูงอายุ"],tci1:1,tci2:1,scopus:0,q1:0,level:2,grants:[],
+   pubs:[{y:2566,t:"ความรู้ ทัศนคติ และผลสัมฤทธิ์การใช้ยาอย่างสมเหตุผล",j:"วารสารชุมชนวิจัย มรนม.",type:"TCI1"},{y:2566,t:"รูปแบบการพัฒนานโยบายสาธารณะกองทุนดูแลผู้สูงอายุ",j:"วารสารวิจัยและพัฒนาระบบสุขภาพ",type:"TCI2"}]},
+  {id:23,prefix:"อ.",first:"สุธิดา",last:"สิงห์ศิริเจริญกุล",pos:"อาจารย์",deg:"พย.ม. - การผดุงครรภ์ขั้นสูง มข.",field:"มารดาทารก / การผดุงครรภ์",tags:["มารดาทารก","การผดุงครรภ์","โลหิตจาง","นวัตกรรมการสอน"],tci1:1,tci2:1,scopus:0,q1:0,level:2,grants:[],
+   pubs:[{y:2565,t:"ประสิทธิผลการจัดการเรียนการสอนผ่านสื่อเสมือนจริง",j:"วารสารวิจัยทางวิทยาศาสตร์สุขภาพ",type:"TCI1"},{y:2565,t:"การดูแลสตรีตั้งครรภ์ที่มีภาวะโลหิตจางจากการขาดธาตุเหล็ก",j:"วารสารคณะพยาบาลศาสตร์ ม.บูรพา",type:"TCI2"}]},
+  {id:24,prefix:"ผศ.ดร.",first:"จุรี",last:"แสนสุข",pos:"ผู้ช่วยศาสตราจารย์",deg:"DrPH - สาธารณสุขศาสตร์ มข. 2566 | สม.ม. - สาธารณสุขศาสตร์ มข.",field:"ผู้ใหญ่ / โรคไม่ติดต่อ",tags:["โรคไต","โรคไม่ติดต่อเรื้อรัง","สุขภาวะ","การศึกษาพยาบาล","ห้องฉุกเฉินผู้สูงอายุ"],tci1:2,tci2:1,scopus:2,q1:1,level:4,grants:[],
+   pubs:[{y:2568,t:"Factors associated with re-attendance at emergency departments among older adults",j:"Inquiry: The Journal of Health Care Organization, Provision, and Financing",type:"Scopus-Q1"},{y:2567,t:"Spatial associations between chronic kidney disease & socio-economic factors",j:"Geospatial Health",type:"Scopus-Q2"},{y:2566,t:"ปัจจัยภาวะสุขภาพและพฤติกรรมสุขภาพกับความดันโลหิตสูง",j:"วารสารวิจัยและพัฒนาสุขภาพ",type:"TCI2"},{y:2565,t:"ผลการจัดการศึกษาแบบบูรณาการระบบครอบครัวเสมือน",j:"วารสารวิจัยและพัฒนาสุขภาพ",type:"TCI1"},{y:2564,t:"การพัฒนาและหาความตรงแบบวัดคุณลักษณะพลเมืองสร้างสรรค์",j:"วารสารสุขภาพและการศึกษาพยาบาล",type:"TCI1"}]},
+  {id:25,prefix:"อ.",first:"นวลละออง",last:"ทองโคตร",pos:"อาจารย์",deg:"พย.ม. - สุขภาพจิตฯ มข.",field:"สุขภาพจิต / อนามัยชุมชน",tags:["สุขภาพจิต","เบาหวาน","ผู้สูงอายุ","อสม."],tci1:2,tci2:1,scopus:0,q1:0,level:2,grants:[],
+   pubs:[{y:2567,t:"ปัจจัยที่มีผลต่อความสามารถดำเนินงานส่งเสริมสุขภาพผู้สูงอายุ อสม.",j:"วารสารศูนย์อนามัยที่ 7",type:"TCI1"},{y:2567,t:"ความสัมพันธ์ภาวะความเครียดกับปัญหาเบาหวานชนิดที่ 2",j:"วารสารป้องกันควบคุมโรคเขต 7",type:"TCI1"},{y:2566,t:"รูปแบบการพัฒนานโยบายสาธารณะกองทุนดูแลผู้สูงอายุ",j:"วารสารวิจัยและพัฒนาระบบสุขภาพ",type:"TCI2"}]},
+  {id:26,prefix:"อ.",first:"ทิพวรรณ",last:"ทัพซ้าย",pos:"อาจารย์",deg:"พย.ม. - การผดุงครรภ์ ม.เชียงใหม่",field:"มารดาทารก / การผดุงครรภ์",tags:["มารดาทารก","การผดุงครรภ์","โลหิตจาง","ความเสี่ยงในการตั้งครรภ์"],tci1:1,tci2:1,scopus:0,q1:0,level:2,grants:[],
+   pubs:[{y:2565,t:"การดูแลสตรีตั้งครรภ์ที่มีภาวะโลหิตจางจากการขาดธาตุเหล็ก",j:"วารสารคณะพยาบาลศาสตร์ ม.บูรพา",type:"TCI1"},{y:2563,t:"การประเมินคุณภาพบัณฑิตปีการศึกษา 2560 วพบ.ขอนแก่น",j:"วารสารวิชาการหลักสูตรและการสอน มรสน.",type:"TCI2"}]},
+  {id:27,prefix:"อ.",first:"วชิรศักดิ์",last:"อภิพัฒฐ์กานต์",pos:"อาจารย์",deg:"พย.ม. - การพยาบาล",field:"การพยาบาลผู้ใหญ่",tags:["ผู้ใหญ่"],tci1:0,tci2:0,scopus:0,q1:0,level:1,grants:[],pubs:[]},
+  {id:28,prefix:"อ.",first:"สายสุดา",last:"จันหัวนา",pos:"อาจารย์",deg:"พย.ม. - การพยาบาล",field:"ผู้ใหญ่และผู้สูงอายุ",tags:["ผู้สูงอายุ","โรคเรื้อรัง","ความดันโลหิตสูง"],tci1:1,tci2:1,scopus:0,q1:0,level:2,grants:[],
+   pubs:[{y:2566,t:"ผลของโปรแกรมส่งเสริมความรอบรู้ด้านสุขภาพ ความดันโลหิต",j:"วารสารพยาบาลทหารบก",type:"TCI1"},{y:2566,t:"การพัฒนารูปแบบการจัดการโรคเรื้อรังผู้สูงอายุแบบมีส่วนร่วม",j:"วารสารวิจัยการพยาบาลและวิทยาศาสตร์สุขภาพ",type:"TCI2"}]},
+  {id:29,prefix:"อ.",first:"กัลยารัตน์",last:"เมธาอภินันท์",pos:"อาจารย์",deg:"พย.ม. - การพยาบาล",field:"การพยาบาลผู้ใหญ่",tags:["ผู้ใหญ่"],tci1:0,tci2:0,scopus:0,q1:0,level:1,grants:[],pubs:[]},
+  {id:30,prefix:"อ.",first:"น้ำทิพย์",last:"ไพคำนาม",pos:"อาจารย์",deg:"พย.ม. - การพยาบาลผู้ใหญ่ มข.",field:"ผู้ใหญ่และผู้สูงอายุ",tags:["Palliative Care","จิตวิญญาณ","LTC","ผู้สูงอายุ"],tci1:2,tci2:0,scopus:0,q1:0,level:2,grants:[],
+   pubs:[{y:2567,t:"การดูแลผู้ป่วยระยะท้ายในมิติจิตวิญญาณของพยาบาล ภาคอีสาน",j:"วารสารอายุรศาสตร์ มข.",type:"TCI1"},{y:2567,t:"ผลลัพธ์การจัดบริการดูแลผู้สูงอายุที่มีภาวะพึ่งพิง LTC",j:"วารสารวิจัยการพยาบาลและการสาธารณสุข",type:"TCI1"}]},
+  {id:31,prefix:"ดร.",first:"ศักดิ์ขรินทร์",last:"นรสาร",pos:"อาจารย์",deg:"PhD - พยาบาลศาสตร์",field:"การพยาบาลชุมชน",tags:["สุขภาพชุมชน","เบาหวาน","ความเครียด"],tci1:1,tci2:0,scopus:0,q1:0,level:2,grants:[],
+   pubs:[{y:2568,t:"บทบาทผู้นำพยาบาลยุคใหม่ในการขับเคลื่อนองค์กรวิชาชีพผ่านเครือข่ายวิชาการและนวัตกรรม",j:"วารสารศูนย์อนามัยที่ 7 ขอนแก่น",type:"TCI1"},{y:2567,t:"ความสัมพันธ์ภาวะความเครียดกับปัญหาเบาหวานชนิดที่ 2",j:"วารสารป้องกันควบคุมโรคเขต 7",type:"TCI1"}]},
+  {id:32,prefix:"ดร.",first:"สุรัสวดี",last:"พนมแก่น",pos:"อาจารย์",deg:"PhD - พยาบาลศาสตร์",field:"ชุมชน / สาธารณสุข",tags:["พัฒนาการเด็ก","พัฒนาการก่อนวัยเรียน","สุขภาพชุมชน"],tci1:2,tci2:1,scopus:0,q1:0,level:2,grants:[],
+   pubs:[{y:2568,t:"ปัจจัยที่มีอิทธิพลต่อพัฒนาการล่าช้าด้านกล้ามเนื้อมัดเล็กในเด็กอายุ 3–5 ปี",j:"วารสารศูนย์อนามัยที่ 9",type:"TCI1"},{y:2568,t:"สถานการณ์พัฒนาการเด็กก่อนวัยเรียนในชุมชนกึ่งเมือง อ.เมือง จ.ขอนแก่น",j:"วารสารศูนย์อนามัยที่ 9",type:"TCI1"},{y:2566,t:"ปัจจัยที่มีความสัมพันธ์กับภาวะความดันโลหิตสูงในชุมชน",j:"วารสารวิจัยสุขภาพ",type:"TCI2"}]},
+  {id:33,prefix:"อ.",first:"สุรีย์พร",last:"พงษ์พยัคฆ์",pos:"อาจารย์",deg:"พย.ม. - การพยาบาล มข. 2565",field:"ผู้ใหญ่ / โรคเลือด",tags:["ผู้ใหญ่","มะเร็ง","โรคเลือด","การป้องกันการติดเชื้อ"],tci1:1,tci2:0,scopus:0,q1:0,level:2,grants:[],pubs:[{y:2566,t:"ผลของการใช้แนวปฏิบัติการดูแลเพื่อป้องกันการติดเชื้อในผู้ป่วยมะเร็งเม็ดเลือดขาว",j:"วารสารสุขภาพกับการจัดการสุขภาพ",type:"TCI1"}]},
+  {id:34,prefix:"ดร.",first:"นิระมล",last:"สมตัว",pos:"อาจารย์",deg:"PhD - พยาบาลศาสตร์ มข. 2568",field:"ชุมชน / การศึกษาพยาบาล",tags:["พลเมืองสร้างสรรค์","การศึกษาพยาบาล","สุขภาพชุมชน"],tci1:2,tci2:1,scopus:0,q1:0,level:2,grants:[],
+   pubs:[{y:2566,t:"ความคงทนของการจัดการศึกษาแบบบูรณาการระบบครอบครัวเสมือน",j:"วารสารการพยาบาลและการดูแลสุขภาพ",type:"TCI2"},{y:2565,t:"ผลการจัดการศึกษาแบบบูรณาการระบบครอบครัวเสมือน",j:"วารสารวิจัยและพัฒนาสุขภาพ",type:"TCI1"},{y:2564,t:"การพัฒนาและหาความตรงแบบวัดคุณลักษณะพลเมืองสร้างสรรค์",j:"วารสารสุขภาพและการศึกษาพยาบาล",type:"TCI1"}]},
+  {id:35,prefix:"อ.",first:"ประภาศรี",last:"ภูผายาง",pos:"อาจารย์",deg:"พย.ม. - การพยาบาล",field:"มารดาทารก",tags:["มารดาทารก","การผดุงครรภ์"],tci1:0,tci2:0,scopus:0,q1:0,level:1,grants:[],pubs:[]},
+  {id:36,prefix:"อ.",first:"อรพนิต",last:"ภูวงษ์ไกร",pos:"อาจารย์",deg:"พย.ม. - สาขาการผดุงครรภ์",field:"มารดาทารก / การผดุงครรภ์",tags:["มารดาทารก","การผดุงครรภ์","คลอดก่อนกำหนด","ความเสี่ยงในการตั้งครรภ์"],tci1:2,tci2:0,scopus:0,q1:0,level:2,grants:[],pubs:[{y:2567,t:"ความสัมพันธ์ระหว่างความรู้และการรับรู้ภาวะเจ็บครรภ์คลอดก่อนกำหนดกับพฤติกรรมการป้องกัน",j:"ราชาวดีสาร วพบ.สุรินทร์",type:"TCI1"},{y:2567,t:"ผลของโปรแกรมการให้ความรู้และการสนับสนุนต่อความรู้ การคลอดก่อนกำหนดและการกลับมารักษาซ้ำ",j:"วารสารสุขภาพและสิ่งแวดล้อมศึกษา",type:"TCI1"}]},
+  {id:37,prefix:"อ.",first:"ดาริกา",last:"ศิริสุทธา",pos:"อาจารย์",deg:"พย.ม. - การพยาบาลผู้ใหญ่ มข.",field:"ผู้ใหญ่ / HIV/AIDS",tags:["ผู้ใหญ่","HIV/AIDS","พฤติกรรมสุขภาพ"],tci1:1,tci2:0,scopus:0,q1:0,level:2,grants:[],pubs:[{y:2560,t:"พฤติกรรมส่งเสริมสุขภาพของผู้ติดเชื้อเอชไอวี/ผู้ป่วยเอดส์ที่ได้รับการรักษาด้วยยาต้านไวรัสสูตรดื้อยา",j:"วารสารการพยาบาลและการดูแลสุขภาพ",type:"TCI1"}]},
+  {id:38,prefix:"อ.",first:"วิชุดา",last:"นพเสริฐ",pos:"อาจารย์",deg:"พย.ม. - การพยาบาลชุมชน มข. 2566",field:"ชุมชน / วัยทำงาน",tags:["สุขภาพชุมชน","วัยทำงาน","ความรอบรู้ด้านสุขภาพ"],tci1:1,tci2:0,scopus:0,q1:0,level:2,grants:[],pubs:[{y:2566,t:"ความรอบรู้ด้านสุขภาพและพฤติกรรมสุขภาพของกลุ่มวัยทำงานอายุ 45–59 ปี อ.พยุหะคีรี จ.นครสวรรค์",j:"พยาบาลสาร มช.",type:"TCI1"}]},
+  {id:39,prefix:"อ.",first:"เชษฐาภรณ์",last:"จันทร์เลิศฤทธิ์",pos:"อาจารย์",deg:"พย.ม. - การพยาบาลผู้ใหญ่",field:"ผู้ใหญ่ / Critical Care",tags:["ผู้ใหญ่","โรคไต","Critical Care","Evidence-Based Nursing"],tci1:1,tci2:0,scopus:0,q1:0,level:2,grants:[],pubs:[{y:2568,t:"การพยาบาลเพื่อป้องกันการเกิดภาวะไตบาดเจ็บเฉียบพลันในผู้ป่วยช็อกจากการติดเชื้อ",j:"วารสารวิทยาลัยพยาบาลบรมราชชนนี กรุงเทพ",type:"TCI1"}]},
+  {id:40,prefix:"อ.",first:"พัชรี",last:"ชูกันหอม",pos:"อาจารย์",deg:"พย.ม. - สาขาการพยาบาลเด็ก รามาธิบดี ม.มหิดล",field:"พยาบาลเด็ก / สุขภาพเด็ก",tags:["พัฒนาการเด็ก","สุขภาพเด็ก","ความรอบรู้ด้านสุขภาพ","การมีส่วนร่วมของบิดา"],tci1:2,tci2:0,scopus:0,q1:0,level:2,grants:[],pubs:[{y:2568,t:"ประสิทธิผลของโปรแกรมการเสริมสร้างความรอบรู้ด้านสุขภาพต่อพฤติกรรมสามเณรในโรงเรียนพระปริยัติธรรม",j:"วารสารพยาบาลทหารบก",type:"TCI1"},{y:2568,t:"การมีส่วนร่วมของบิดาในการดูแลเด็กปฐมวัย: การศึกษาเชิงคุณภาพ",j:"วารสารพยาบาลทหารบก",type:"TCI1"}]},
+  {id:41,prefix:"อ.",first:"อภิวัฒน์",last:"กุลวงศ์",pos:"อาจารย์",deg:"พย.ม. - การพยาบาล",field:"การพยาบาล",tags:["การพยาบาล"],tci1:0,tci2:0,scopus:0,q1:0,level:1,grants:[],pubs:[]},
+  {id:42,prefix:"ผศ.",first:"ปราณี",last:"แสดคง",pos:"จ้างเหมาบริการอาจารย์ประจำเต็มเวลา",deg:"พย.ม. - การพยาบาลชุมชน",field:"ชุมชน / สุขภาพปฐมภูมิ",tags:["สุขภาพชุมชน","อสม.","ความรอบรู้ด้านสุขภาพ"],tci1:1,tci2:1,scopus:0,q1:0,level:2,grants:[],
+   pubs:[{y:2566,t:"ปัจจัยทำนายความรอบรู้ด้านสุขภาพต่อพฤติกรรม อสม.",j:"วารสารพยาบาลศาสตร์และสุขภาพ",type:"TCI1"},{y:2564,t:"การพัฒนารูปแบบการจัดการเรียนการสอนสมรรถนะนักศึกษา",j:"วารสารชุมชนวิจัย มรนม.",type:"TCI2"}]},
+  {id:43,prefix:"ดร.",first:"สุธิดา",last:"อินทรเพชร",pos:"อาจารย์",deg:"PhD - ระบาดวิทยาคลินิก ม.เชียงใหม่",field:"มารดาทารก / ระบาดวิทยา",tags:["มารดาทารก","ทารกคลอดก่อนกำหนด","ระบาดวิทยา","คุณภาพชีวิต"],tci1:1,tci2:1,scopus:2,q1:0,level:3,grants:[],
+   pubs:[{y:2566,t:"Quality of Life among Elderly in Yogyakarta",j:"Jurnal Promkes Indonesia",type:"Scopus-Q3"},{y:2565,t:"ประสิทธิผลการจัดการเรียนการสอนผ่านสื่อเสมือนจริง",j:"วารสารวิจัยทางวิทยาศาสตร์สุขภาพ",type:"TCI1"},{y:2565,t:"การพัฒนานวัตกรรมสื่อชุมชนเพื่อป้องกันภาวะฉุกเฉิน ผู้สูงอายุ",j:"วารสาร มฉก วิชาการ",type:"TCI2"},{y:2564,t:"Risk Factors of Preterm Birth among Northeastern Thai Teenage Mothers",j:"J South Asian Federation of Obstetrics & Gynecology",type:"Scopus-Q4"}]},
+  {id:44,prefix:"อ.",first:"กัลยารัตน์",last:"คาดสนิท",pos:"อาจารย์",deg:"พย.ม. - ผู้สูงอายุ ม.มหิดล",field:"ผู้ใหญ่และผู้สูงอายุ",tags:["ผู้สูงอายุ","LTC","การดูแลระยะยาว","คุณภาพชีวิต"],tci1:1,tci2:1,scopus:1,q1:0,level:3,grants:[],
+   pubs:[{y:2566,t:"Quality of Life among Elderly in Yogyakarta",j:"Jurnal Promkes Indonesia",type:"Scopus-Q3"},{y:2566,t:"ผลของโปรแกรมส่งเสริมความรอบรู้ด้านสุขภาพ ความดันโลหิต",j:"วารสารพยาบาลทหารบก",type:"TCI1"},{y:2564,t:"สถานการณ์ปัญหาและความต้องการดูแลผู้สูงอายุระยะยาว",j:"วารสารศูนย์อนามัยที่ 9",type:"TCI2"}]},
+  {id:45,prefix:"อ.",first:"ปวินตรา",last:"มานาดี",pos:"อาจารย์",deg:"พย.ม. - การผดุงครรภ์ ม.เชียงใหม่",field:"มารดาทารก / ผู้สูงอายุ",tags:["มารดาทารก","ผู้สูงอายุ","โรงเรียนผู้สูงอายุ","คุณภาพชีวิต"],tci1:1,tci2:1,scopus:1,q1:0,level:2,grants:[],
+   pubs:[{y:2566,t:"Quality of Life among Elderly in Yogyakarta",j:"Jurnal Promkes Indonesia",type:"Scopus-Q3"},{y:2566,t:"แนวทางการพัฒนาสุขภาวะองค์รวมโรงเรียนผู้สูงอายุ",j:"วารสารวิจัยทางวิทยาศาสตร์สุขภาพ",type:"TCI1"},{y:2565,t:"ประสิทธิผลการจัดการเรียนการสอนผ่านสื่อเสมือนจริง",j:"วารสารวิจัยทางวิทยาศาสตร์สุขภาพ",type:"TCI2"}]},
+  {id:46,prefix:"อ.",first:"วรรณพร",last:"คำพิลา",pos:"อาจารย์",deg:"พย.ม. - การผดุงครรภ์ ม.เชียงใหม่",field:"มารดาทารก",tags:["มารดาทารก","โลหิตจาง","โรคเรื้อรัง","ผู้สูงอายุ"],tci1:1,tci2:1,scopus:0,q1:0,level:2,grants:[],
+   pubs:[{y:2566,t:"การพัฒนารูปแบบการจัดการโรคเรื้อรังผู้สูงอายุแบบมีส่วนร่วม",j:"วารสารวิจัยการพยาบาลและวิทยาศาสตร์สุขภาพ",type:"TCI1"},{y:2565,t:"การดูแลสตรีตั้งครรภ์ที่มีภาวะโลหิตจางจากการขาดธาตุเหล็ก",j:"วารสารคณะพยาบาลศาสตร์ ม.บูรพา",type:"TCI2"}]},
+  {id:47,prefix:"อ.",first:"สุกัญญา",last:"รักศรี",pos:"อาจารย์",deg:"พย.ม. - การผดุงครรภ์ ม.บูรพา",field:"มารดาทารก",tags:["มารดาทารก","โรคเรื้อรัง","พฤติกรรมสุขภาพ"],tci1:1,tci2:1,scopus:0,q1:0,level:2,grants:[],
+   pubs:[{y:2566,t:"การพัฒนารูปแบบการจัดการโรคเรื้อรังผู้สูงอายุแบบมีส่วนร่วม",j:"วารสารวิจัยการพยาบาลและวิทยาศาสตร์สุขภาพ",type:"TCI1"},{y:2564,t:"พฤติกรรมและผลกระทบจากการติดเกมของนักเรียนมัธยมศึกษา",j:"วารสารศูนย์อนามัยที่ 9",type:"TCI2"}]},
+  {id:48,prefix:"อ.",first:"จรรยา",last:"คนใหญ่",pos:"อาจารย์",deg:"พย.ม. - การพยาบาลผู้ใหญ่ มข.",field:"ผู้ใหญ่และผู้สูงอายุ",tags:["ผู้ใหญ่","เบาหวาน","LTC","ผู้สูงอายุ","Palliative Care"],tci1:2,tci2:0,scopus:0,q1:0,level:2,grants:[],
+   pubs:[{y:2567,t:"ผลลัพธ์การจัดบริการดูแลผู้สูงอายุที่มีภาวะพึ่งพิง LTC",j:"วารสารวิจัยการพยาบาลและการสาธารณสุข",type:"TCI1"},{y:2566,t:"ผลของโปรแกรมส่งเสริมสุขภาพต่อพฤติกรรมป้องกันแผลที่เท้า เบาหวาน",j:"พยาบาลสาร มช.",type:"TCI1"}]},
+];
+
+// ─────────────────────────── STATE ───────────────────────────
+let selected=null, activeTab="overview";
+
+// ─────────────────────────── INIT ───────────────────────────
+document.getElementById("total-text").textContent=`อาจารย์ ${FACULTY.length} คน · พิมพ์ชื่อเพื่อดู Research Profile ส่วนตัว`;
+
+// Level pills
+const pillsEl=document.getElementById("level-pills");
+LEVELS.forEach(lv=>{
+  const cnt=FACULTY.filter(f=>f.level===lv.level).length;
+  pillsEl.innerHTML+=`<div class="level-pill" style="border:1px solid ${lv.color}30">
+    <span>${lv.icon}</span><span style="color:${lv.color};font-weight:700">${cnt}</span><span style="color:#475569">${lv.label}</span>
+  </div>`;
+});
+
+// Quick buttons
+renderEmptyState();
+
+// ─────────────────────────── SEARCH ───────────────────────────
+const searchInput=document.getElementById("search-input");
+const clearBtn=document.getElementById("clear-btn");
+const dropdown=document.getElementById("dropdown");
+
+searchInput.addEventListener("input",function(){
+  const val=this.value.trim();
+  clearBtn.style.display=val?"":"none";
+  if(!val){selected=null;dropdown.classList.remove("open");renderEmptyState();return;}
+  const results=FACULTY.filter(f=>{
+    const full=`${f.prefix}${f.first} ${f.last}`;
+    return full.includes(val)||f.first.includes(val)||f.last.includes(val);
+  });
+  renderDropdown(results.slice(0,12));
+});
+
+searchInput.addEventListener("focus",function(){
+  if(this.value.trim()&&!selected) dropdown.classList.add("open");
+});
+
+document.addEventListener("click",function(e){
+  if(!e.target.closest(".search-wrap")) dropdown.classList.remove("open");
+});
+
+clearBtn.addEventListener("click",function(){
+  searchInput.value="";clearBtn.style.display="none";
+  selected=null;dropdown.classList.remove("open");renderEmptyState();
+});
+
+function renderDropdown(results){
+  if(!results.length){dropdown.classList.remove("open");return;}
+  dropdown.innerHTML=results.map(f=>`
+    <div class="drop-item" data-id="${f.id}">
+      <div>
+        <div class="drop-item-name">${f.prefix}<b>${f.first}</b> ${f.last}</div>
+        <div class="drop-item-tags">${(f.tags||[]).slice(0,3).map(t=>`<span style="font-size:10px;padding:1px 6px;border-radius:99px;background:${tagColor(t)};color:#374151;font-weight:600">${t}</span>`).join("")}</div>
+      </div>
+      <span class="drop-level-badge" style="color:${LEVELS[f.level-1].color};background:${LEVELS[f.level-1].color}20">${LEVELS[f.level-1].icon} L${f.level}</span>
+    </div>
+  `).join("");
+  dropdown.classList.add("open");
+  dropdown.querySelectorAll(".drop-item").forEach(el=>{
+    el.addEventListener("click",()=>{
+      const f=FACULTY.find(x=>x.id===+el.dataset.id);
+      pickFaculty(f);
+    });
+  });
+}
+
+function pickFaculty(f){
+  selected=f;activeTab="overview";
+  searchInput.value=`${f.prefix}${f.first} ${f.last}`;
+  dropdown.classList.remove("open");
+  renderProfile();
+}
+
+// ─────────────────────────── RENDER ───────────────────────────
+function renderEmptyState(){
+  const el=document.getElementById("main-content");
+  const quick=FACULTY.slice(0,9).map(f=>`<button class="quick-btn" data-id="${f.id}">${f.prefix}${f.first}</button>`).join("");
+  el.innerHTML=`<div class="empty-search">
+    <div class="empty-search-icon">🧭</div>
+    <p style="color:#1e293b;font-size:14px">ค้นหาชื่ออาจารย์ด้านบน เพื่อดู Research Pathway ส่วนตัว</p>
+    <div class="quick-btns">${quick}</div>
+  </div>`;
+  el.querySelectorAll(".quick-btn").forEach(btn=>{
+    btn.addEventListener("click",()=>{
+      const f=FACULTY.find(x=>x.id===+btn.dataset.id);
+      pickFaculty(f);
+    });
+  });
+}
+
+function renderProfile(){
+  if(!selected) return;
+  const f=selected, lv=LEVELS[f.level-1];
+  const pubs=[...(f.pubs||[])].sort((a,b)=>b.y-a.y);
+  const totalPubs=f.tci1+f.tci2+f.scopus;
+  const levelBarSegs=LEVELS.map((_,i)=>`<div class="level-bar-seg" style="background:${i<f.level?LEVELS[i].color:'#1e293b'}"></div>`).join("");
+  const tags=(f.tags||[]).map(t=>`<span class="exp-tag" style="background:${tagColor(t)}">${t}</span>`).join("");
+  const grantsHtml=f.grants.length?`<div class="grants-wrap"><div class="section-title" style="margin-top:16px">💰 ทุนวิจัย</div>${f.grants.map(g=>`<div class="grant-item"><span>🏅</span><span>${g}</span></div>`).join("")}</div>`:"";
+  const years=[2567,2566,2565,2564,2563];
+  const yearBars=years.map(yr=>{
+    const yp=(f.pubs||[]).filter(p=>p.y===yr);
+    const segs=yp.length===0?`<span class="year-bar-empty">ไม่มีผลงาน</span>`:
+      yp.map(p=>{const s=TYPE_STYLE[p.type]||{bg:"#374151"};return`<div class="year-bar-seg" style="background:${s.bg}" title="${p.t}">${typeBadge(p.type)}</div>`;}).join("");
+    return`<div class="year-row"><span class="year-lbl">${yr}</span><div class="year-bar">${segs}</div><span class="year-count">${yp.length||""}</span></div>`;
+  }).join("");
+  const nextLvlLine=f.level<5?`<div class="criteria-box" style="background:rgba(255,255,255,0.02);border:1px dashed rgba(255,255,255,0.07);margin-top:8px"><span class="criteria-label" style="color:#475569">🎯 เกณฑ์ L${f.level+1}: </span><span class="criteria-text" style="color:#334155">${LEVELS[f.level].criteria}</span></div>`:"";
+
+  const el=document.getElementById("main-content");
+  el.innerHTML=`
+    <!-- Header card -->
+    <div class="card">
+      <div class="profile-head">
+        <div style="flex:1;min-width:180px">
+          <div class="profile-name">${f.prefix}${f.first} ${f.last}</div>
+          <div class="profile-pos">${f.pos}</div>
+          <div class="profile-deg">🎓 ${f.deg}</div>
+          <div class="tag-wrap">${tags}</div>
+        </div>
+        <div>
+          <div class="level-badge" style="background:${lv.bg};border:1.5px solid ${lv.color}30">
+            <span style="font-size:18px">${lv.icon}</span>
+            <div>
+              <div class="level-label" style="color:${lv.color}">Level ${f.level} — ${lv.label}</div>
+              <div class="level-desc">${lv.desc}</div>
+            </div>
+          </div>
+          <div class="level-bar">${levelBarSegs}</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Stats -->
+    <div class="stats-grid">
+      <div class="stat-card"><div class="stat-val" style="color:#1d4ed8">${f.tci1}</div><div class="stat-lbl">TCI Tier 1</div></div>
+      <div class="stat-card"><div class="stat-val" style="color:#b45309">${f.tci2}</div><div class="stat-lbl">TCI Tier 2</div></div>
+      <div class="stat-card"><div class="stat-val" style="color:#7c3aed">${f.scopus}</div><div class="stat-lbl">Scopus</div></div>
+      <div class="stat-card"><div class="stat-val" style="color:#059669">${f.q1}</div><div class="stat-lbl">Q1</div></div>
+    </div>
+
+    <!-- Tabs -->
+    <div class="tabs">
+      <button class="tab-btn ${activeTab==='overview'?'active':''}" data-tab="overview">📊 ภาพรวม</button>
+      <button class="tab-btn ${activeTab==='publications'?'active':''}" data-tab="publications">📄 ผลงาน (${totalPubs})</button>
+      <button class="tab-btn ${activeTab==='nextsteps'?'active':''}" data-tab="nextsteps">🎯 Next Steps</button>
+    </div>
+
+    <!-- Tab content -->
+    <div class="tab-content" id="tab-body"></div>
+    <p class="footer-note">ข้อมูลจากฐานข้อมูลผลงานวิจัย วพบ.ขอนแก่น ปีการศึกษา 2563–2567</p>
+  `;
+
+  // Tab buttons
+  el.querySelectorAll(".tab-btn").forEach(btn=>{
+    btn.addEventListener("click",()=>{
+      activeTab=btn.dataset.tab;
+      el.querySelectorAll(".tab-btn").forEach(b=>b.classList.remove("active"));
+      btn.classList.add("active");
+      renderTabBody(f,lv,pubs,yearBars,grantsHtml,nextLvlLine);
+    });
+  });
+
+  renderTabBody(f,lv,pubs,yearBars,grantsHtml,nextLvlLine);
+}
+
+function renderTabBody(f,lv,pubs,yearBars,grantsHtml,nextLvlLine){
+  const tb=document.getElementById("tab-body");
+  if(!tb) return;
+
+  if(activeTab==="overview"){
+    tb.innerHTML=`
+      <div class="section-title">📈 ผลงานตีพิมพ์ 5 ปีย้อนหลัง (2563–2567)</div>
+      ${yearBars}
+      ${grantsHtml}
+      <div class="criteria-box" style="background:${lv.color}15;border:1px solid ${lv.color}20;margin-top:14px">
+        <span class="criteria-label" style="color:${lv.color}">✅ เกณฑ์ L${f.level}: </span>
+        <span class="criteria-text" style="color:#94a3b8">${lv.criteria}</span>
+      </div>
+      ${nextLvlLine}
+    `;
+  } else if(activeTab==="publications"){
+    const pubsHtml=pubs.length===0?`<div class="empty-state"><div class="empty-icon">📝</div><p class="empty-text">ยังไม่มีผลงานตีพิมพ์<br>เริ่มต้นจาก TCI Tier 2 ก่อนได้เลยค่ะ</p></div>`:
+      pubs.map(p=>`<div class="pub-item">
+        <span class="pub-year">${p.y}</span>
+        <div style="flex:1"><div class="pub-title">${p.t}</div><div class="pub-journal">${p.j}</div>${typeBadge(p.type)}</div>
+      </div>`).join("");
+    tb.innerHTML=`<div class="section-title">📄 รายการผลงานตีพิมพ์</div>${pubsHtml}`;
+  } else {
+    const steps=lv.nextSteps.map((s,i)=>`
+      <div class="step-item">
+        <div class="step-num" style="background:${lv.color}20;border:1.5px solid ${lv.color};color:${lv.color}">${i+1}</div>
+        <span class="step-text">${s}</span>
+      </div>`).join("");
+    const nextLbl=f.level<5?`L${f.level+1} ${LEVELS[f.level].label}`:"ผู้นำวิจัยระดับโลก";
+    const jList=lv.journals.map(j=>`<div class="rec-item" style="color:#64748b;border-left:2px solid ${lv.color}">${j}</div>`).join("");
+    const fList=lv.funding.map(fn=>`<div class="rec-item" style="color:#64748b;border-left:2px solid ${lv.color}">${fn}</div>`).join("");
+    tb.innerHTML=`
+      <div class="section-title">🎯 Next Steps แนะนำ</div>
+      <p style="color:#475569;font-size:12px;margin-bottom:14px">L${f.level} ${lv.label} → ${nextLbl}</p>
+      ${steps}
+      <div class="rec-grid" style="margin-top:14px">
+        <div class="rec-box"><div class="rec-title">📰 วารสารที่แนะนำ</div>${jList}</div>
+        <div class="rec-box"><div class="rec-title">💰 แหล่งทุน</div>${fList}</div>
+      </div>
+    `;
+  }
+}
+</script>
+</body>
+</html>
